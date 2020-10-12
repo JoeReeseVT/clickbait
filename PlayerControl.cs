@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 
@@ -37,7 +37,7 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            transform.position += transform.right * Input.GetAxis(axisName) * speed / 3;
+            transform.position += transform.right * Input.GetAxis(axisName) * speed;
 
         }
 
@@ -46,18 +46,18 @@ public class PlayerControl : MonoBehaviour
         {
             float jumpVelocity = 25f;
             rigidbody2d.velocity = Vector2.up * jumpVelocity;
- 
+
         }
 
 
         //flip character based on movement direction
-        if (Input.GetAxis(axisName) < 0)
+        if (Input.GetAxis(axisName) > 0)
         {
             Vector3 newScale = transform.localScale;
             newScale.x = 1.0f;
             transform.localScale = newScale;
         }
-        else if (Input.GetAxis(axisName) > 0)
+        else if (Input.GetAxis(axisName) < 0)
         {
             Vector3 newScale = transform.localScale;
             newScale.x = -1.0f;
