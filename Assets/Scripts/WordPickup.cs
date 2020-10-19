@@ -6,11 +6,11 @@ using UnityEngine;
 public class WordPickup : MonoBehaviour
 {
     public GameObject word;
+    public AudioSource pickUpSound;
     public double bouncePeriod;
 
     private Rigidbody2D wordRigidbody;
     private SpriteRenderer wordSprite;
-    private AudioSource wordAudio;
     private Vector2 position;
     private float startY;
     private bool hasPlayed;
@@ -20,7 +20,6 @@ public class WordPickup : MonoBehaviour
     {
         wordRigidbody = word.GetComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         wordSprite = word.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
-        wordAudio = word.GetComponent(typeof(AudioSource)) as AudioSource;
 
         position = new Vector2(wordRigidbody.position.x, wordRigidbody.position.y);
 
@@ -39,7 +38,7 @@ public class WordPickup : MonoBehaviour
     {
         wordSprite.enabled = false;
         if (!hasPlayed) {
-            wordAudio.Play();
+            pickUpSound.Play();
             hasPlayed = true;
         }
     }
