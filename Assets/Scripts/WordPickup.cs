@@ -19,6 +19,7 @@ public class WordPickup : MonoBehaviour
     private double liftVelo;
     private double liftDeltaT;
     private double liftStartTime;
+    private Color spriteColor;
 
     private const int UNCOLLECTED = 0, FADE_STARTED = 1, DISABLED = 2;
 
@@ -27,6 +28,7 @@ public class WordPickup : MonoBehaviour
     {
         wordRigidbody = word.GetComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         wordSprite = word.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+        spriteColor = wordSprite.GetComponent<SpriteRenderer>().color;
 
         position = new Vector2(wordRigidbody.position.x, wordRigidbody.position.y);
 
@@ -48,9 +50,11 @@ public class WordPickup : MonoBehaviour
 
             case FADE_STARTED:
                 liftDeltaT = Time.time - liftStartTime;
-                //if (true)
                 if (liftDeltaT <= liftDuration)
                 {
+                    spriteColor.a = (float)(1 - liftDeltaT / liftDuration);
+                    wordSprite.GetComponent<SpriteRenderer>().color = spriteColor;
+
                     position.y = (float)(liftVelo * liftDeltaT + startY);
                     wordRigidbody.MovePosition(position);
                 }
