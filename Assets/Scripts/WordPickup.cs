@@ -8,12 +8,19 @@ public class WordPickup : MonoBehaviour
     public GameObject word;
     public AudioSource pickUpSound;
     public double bouncePeriod;
+    public double liftDuration;  // Point when the parabola flattens out
+    public double liftDistance;
 
     private Rigidbody2D wordRigidbody;
     private SpriteRenderer wordSprite;
     private Vector2 position;
     private float startY;
-    private bool hasPlayed;
+    private int state;
+    private double liftVelo;
+    private double liftDeltaT;
+    private double liftStartTime;
+
+    private const int UNCOLLECTED = 0, FADE_STARTED = 1, DISABLED = 2;
 
     // Start is called before the first frame update
     void Start()
@@ -24,22 +31,52 @@ public class WordPickup : MonoBehaviour
         position = new Vector2(wordRigidbody.position.x, wordRigidbody.position.y);
 
         startY = position.y;
-        hasPlayed = false;
+        state = 0; 
+
+        liftVelo = liftDistance / liftDuration;
     }
 
     // Update is called once per frame
     void Update()
     {
-        position.y = startY + (float)Math.Sin(2 * Math.PI * Time.time / bouncePeriod);
-        wordRigidbody.MovePosition(position);
+        switch (state) {
+
+            case UNCOLLECTED:
+                position.y = startY + (float)Math.Sin(2 * Math.PI * Time.time / bouncePeriod);
+                wordRigidbody.MovePosition(position);
+                break;
+
+            case FADE_STARTED:
+                liftDeltaT = Time.time - liftStartTime;
+                //if (true)
+                if (liftDeltaT <= liftDuration)
+                {
+                    position.y = (float)(liftVelo * liftDeltaT + startY);
+                    wordRigidbody.MovePosition(position);
+                }
+                break;
+
+            case DISABLED:  // Fall through to default
+            default:
+                break;  // Do nothing
+        }
     }
 
     void OnTriggerEnter2D()
     {
-        wordSprite.enabled = false;
-        if (!hasPlayed) {
-            pickUpSound.Play();
-            hasPlayed = true;
+        switch(state)
+        {
+            case UNCOLLECTED:
+                pickUpSound.Play();
+                startY = position.y;
+                state = FADE_STARTED;
+                liftStartTime = Time.time;
+                break;
+
+            case FADE_STARTED:
+            case DISABLED:
+            default:
+                break;
         }
     }
 }
