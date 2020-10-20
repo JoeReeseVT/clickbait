@@ -21,6 +21,8 @@ public class WordPickup : MonoBehaviour
     private double liftStartTime;
     private Color spriteColor;
 
+    private BoxCollider2D wordCollider;
+
     private const int UNCOLLECTED = 0, FADE_STARTED = 1, DISABLED = 2;
 
     // Start is called before the first frame update
@@ -28,12 +30,13 @@ public class WordPickup : MonoBehaviour
     {
         wordRigidbody = word.GetComponent(typeof(Rigidbody2D)) as Rigidbody2D;
         wordSprite = word.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+        wordCollider = word.GetComponent(typeof(BoxCollider2D)) as BoxCollider2D;
         spriteColor = wordSprite.GetComponent<SpriteRenderer>().color;
 
         position = new Vector2(wordRigidbody.position.x, wordRigidbody.position.y);
 
         startY = position.y;
-        state = 0; 
+        state = 0;
 
         liftVelo = liftDistance / liftDuration;
     }
@@ -49,6 +52,7 @@ public class WordPickup : MonoBehaviour
                 break;
 
             case FADE_STARTED:
+                wordCollider.gameObject.SetActive(false);
                 liftDeltaT = Time.time - liftStartTime;
                 if (liftDeltaT <= liftDuration)
                 {
@@ -78,6 +82,7 @@ public class WordPickup : MonoBehaviour
                 break;
 
             case FADE_STARTED:
+
             case DISABLED:
             default:
                 break;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -19,7 +19,7 @@ public class TimerScript : MonoBehaviour
         time += Time.deltaTime;
 
         intTime = (int)time;
-        
-        timerText.text = intTime.ToString();
+
+        timerText.text = "Time: " + intTime.ToString();
     }
 }
