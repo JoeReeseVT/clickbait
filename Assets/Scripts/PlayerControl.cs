@@ -1,14 +1,22 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using TMPro;
 
 public class PlayerControl : MonoBehaviour
 {
 
+    public TextMeshProUGUI scoreText;
+
     public float speed = 0.2f;
     public string axisName = "Horizontal";
     public float jump = 1;
+    
 
+    public GameObject endTrigger;  // End screen trigger object
+
+    public int startingWords;
+    private int remainingWords;
 
     [SerializeField] private LayerMask platformsLayerMask;
     private Rigidbody2D rigidbody2d;
@@ -19,6 +27,11 @@ public class PlayerControl : MonoBehaviour
         rigidbody2d = transform.GetComponent<Rigidbody2D>();
         boxCollider2D = transform.GetComponent<BoxCollider2D>();
 
+        remainingWords = startingWords;
+
+        endTrigger.gameObject.SetActive(false);
+
+
     }
 
     bool IsGrounded()
@@ -26,6 +39,21 @@ public class PlayerControl : MonoBehaviour
         RaycastHit2D raycastHit2D = Physics2D.BoxCast(boxCollider2D.bounds.center, boxCollider2D.bounds.size, 0f, Vector2.down, .1f, platformsLayerMask);
         return raycastHit2D.collider != null;
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+        if (other.gameObject.CompareTag("WordPickUp"))
+        {
+            remainingWords -= 1;
+
+            if (remainingWords <= 0)
+            {
+                endTrigger.gameObject.SetActive(true);
+
+            }
+        }
     }
 
     void Update()
@@ -40,6 +68,10 @@ public class PlayerControl : MonoBehaviour
             transform.position += transform.right * Input.GetAxis(axisName) * speed;
 
         }
+
+
+        //score
+        scoreText.text = "Words left: " + remainingWords.ToString();
 
         //jump code
         if (IsGrounded() && Input.GetKey(KeyCode.UpArrow))
